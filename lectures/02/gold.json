@@ -1,0 +1,149 @@
+{
+  "不審メールの対応手順は？": {
+    "needs_review": false,
+    "must_include": [
+      "開かず",
+      "訓練窓口",
+      "報告"
+    ]
+  },
+  "疑わしいメールは開いてよいですか": {
+    "needs_review": false,
+    "must_include": [
+      "開かず",
+      "訓練窓口",
+      "報告"
+    ]
+  },
+  "怪しいメールの報告先と扱いを教えて": {
+    "needs_review": false,
+    "must_include": [
+      "開かず",
+      "訓練窓口",
+      "報告"
+    ]
+  },
+  "ログの原本とコピーはどう使いますか": {
+    "needs_review": false,
+    "must_include": [
+      "原本",
+      "保存",
+      "コピー"
+    ]
+  },
+  "分析時はログのどちらを使いますか": {
+    "needs_review": false,
+    "must_include": [
+      "原本",
+      "保存",
+      "コピー"
+    ]
+  },
+  "調査で原本ログはどうしますか": {
+    "needs_review": false,
+    "must_include": [
+      "原本",
+      "保存",
+      "コピー"
+    ]
+  },
+  "重要度を判断する二つの観点は？": {
+    "needs_review": false,
+    "must_include": [
+      "影響",
+      "緊急度"
+    ]
+  },
+  "影響と何を見て重要度を決めますか": {
+    "needs_review": false,
+    "must_include": [
+      "影響",
+      "緊急度"
+    ]
+  },
+  "重要度評価で見る要素を挙げて": {
+    "needs_review": false,
+    "must_include": [
+      "影響",
+      "緊急度"
+    ]
+  },
+  "隔離を実行するには誰の承認が必要ですか": {
+    "needs_review": false,
+    "must_include": [
+      "責任者",
+      "承認"
+    ]
+  },
+  "責任者が承認する前に隔離しますか": {
+    "needs_review": false,
+    "must_include": [
+      "責任者",
+      "承認"
+    ]
+  },
+  "端末隔離前に得るものは何ですか": {
+    "needs_review": false,
+    "must_include": [
+      "責任者",
+      "承認"
+    ]
+  },
+  "引継ぎ記録に必要な二つの内容は？": {
+    "needs_review": false,
+    "must_include": [
+      "事象",
+      "対応状況"
+    ]
+  },
+  "引継ぎメモの記録内容を教えて": {
+    "needs_review": false,
+    "must_include": [
+      "事象",
+      "対応状況"
+    ]
+  },
+  "担当を交代するときに残す内容は何ですか": {
+    "needs_review": false,
+    "must_include": [
+      "事象",
+      "対応状況"
+    ]
+  },
+  "隔離の承認者が不在ならどうしますか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "承認後に隔離する際の製品名は何ですか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "ログ分析に使う製品の名前は何ですか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "重大事象の報告期限は何分ですか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "端末隔離を実行するコマンドを教えて": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "引継ぎ記録の保存先URLはどこですか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  }
+}

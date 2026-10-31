@@ -1,0 +1,94 @@
+{
+  "config": {
+    "base_model": "Qwen/Qwen3.5-0.8B",
+    "revision": "2fc06364715b967f1860aea9cf38778875588b17",
+    "seed": 42,
+    "num_train_epochs": 20,
+    "warmup_steps": 6,
+    "lr": 0.0002,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "max_seq_len": 512,
+    "max_new_tokens": 96,
+    "gen": {
+      "do_sample": false
+    }
+  },
+  "versions": {
+    "transformers": "5.18.0",
+    "peft": "0.21.1",
+    "trl": "1.14.2",
+    "torch": "2.11.0+cu130"
+  },
+  "method": "LoRA（量子化なし）",
+  "before": {
+    "label": "before",
+    "n": 21,
+    "format_rate": 0.2857142857142857,
+    "content_rate": 0.09523809523809523,
+    "both_rate": 0.09523809523809523,
+    "seconds": 19.4
+  },
+  "after": {
+    "label": "after",
+    "n": 21,
+    "format_rate": 1.0,
+    "content_rate": 0.9047619047619048,
+    "both_rate": 0.9047619047619048,
+    "seconds": 36.6
+  },
+  "regressed": [],
+  "knowledge": [
+    {
+      "質問": "訓練窓口の担当者の氏名は何ですか",
+      "FAQ にある": false,
+      "学習前の分類": "format_error",
+      "学習前の出力": "{\"answer\": \"訓練窓口の担当者の氏名は記載されていません\"}",
+      "学習後の分類": "needs_review",
+      "学習後の出力": "{\"answer\": \"この FAQ には記載がありません。責任者に確認が必要です。\", \"needs_review\": true}"
+    },
+    {
+      "質問": "重大事象で外部機関へ通報する期限は何分ですか",
+      "FAQ にある": false,
+      "学習前の分類": "format_error",
+      "学習前の出力": "{\"answer\": \"確認が必要\"}",
+      "学習後の分類": "needs_review",
+      "学習後の出力": "{\"answer\": \"この FAQ には記載がありません。責任者に確認が必要です。\", \"needs_review\": true}"
+    },
+    {
+      "質問": "ログを暗号化するときの暗号方式は何ですか",
+      "FAQ にある": false,
+      "学習前の分類": "format_error",
+      "学習前の出力": "{\"answer\": \"暗号方式は暗号化されたログファイルを使用します\"}",
+      "学習後の分類": "needs_review",
+      "学習後の出力": "{\"answer\": \"この FAQ には記載がありません。責任者に確認が必要です。\", \"needs_review\": true}"
+    },
+    {
+      "質問": "端末隔離には何が必要ですか",
+      "FAQ にある": true,
+      "学習前の分類": "format_error",
+      "学習前の出力": "{\"answer\": \"責任者の承認後に実施します\"}",
+      "学習後の分類": "asserted",
+      "学習後の出力": "{\"answer\": \"端末隔離は責任者の承認後に実施します。\", \"needs_review\": false}"
+    }
+  ],
+  "executed_training_myself": true,
+  "training": {
+    "seconds": 172.70406532287598,
+    "global_step": 40,
+    "last_logged_loss": 0.017755341529846192,
+    "mean_loss": 0.5619227655231953
+  },
+  "execution": {
+    "finished_at_utc": "2026-10-31T15:14:45.902590+00:00",
+    "gpu": "Tesla T4",
+    "seed": 42,
+    "dataset": "fictional_soc_faq_v1"
+  },
+  "dataset": {
+    "train": 14,
+    "valid": 7,
+    "test": 21,
+    "faq_items": 5
+  }
+}

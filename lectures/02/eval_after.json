@@ -1,0 +1,201 @@
+{
+  "summary": {
+    "label": "after",
+    "n": 21,
+    "format_rate": 1.0,
+    "content_rate": 0.9047619047619048,
+    "both_rate": 0.9047619047619048,
+    "seconds": 36.6
+  },
+  "rows": [
+    {
+      "question": "不審メールの対応手順は？",
+      "raw": "{\"answer\": \"不審メールは開かず、訓練窓口へ報告します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "疑わしいメールは開いてよいですか",
+      "raw": "{\"answer\": \"不審メールは開かず、訓練窓口へ報告します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "怪しいメールの報告先と扱いを教えて",
+      "raw": "{\"answer\": \"不審メールは開かず、訓練窓口へ報告します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "ログの原本とコピーはどう使いますか",
+      "raw": "{\"answer\": \"調査ログは原本を保存し、コピーで分析します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "分析時はログのどちらを使いますか",
+      "raw": "{\"answer\": \"調査ログは原本を保存し、コピーで分析します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "調査で原本ログはどうしますか",
+      "raw": "{\"answer\": \"調査ログは原本を保存し、コピーで分析します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "重要度を判断する二つの観点は？",
+      "raw": "{\"answer\": \"重要度は影響と緊急度で判断します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "影響と何を見て重要度を決めますか",
+      "raw": "{\"answer\": \"重要度は影響と緊急度で判断します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "重要度評価で見る要素を挙げて",
+      "raw": "{\"answer\": \"重要度は影響と緊急度で判断します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "隔離を実行するには誰の承認が必要ですか",
+      "raw": "{\"answer\": \"端末隔離は責任者の承認後に実施します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "責任者が承認する前に隔離しますか",
+      "raw": "{\"answer\": \"端末隔離は責任者の承認後に実施します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "端末隔離前に得るものは何ですか",
+      "raw": "{\"answer\": \"端末隔離は責任者の承認後に実施します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "引継ぎ記録に必要な二つの内容は？",
+      "raw": "{\"answer\": \"引継ぎには事象と対応状況を記録します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "引継ぎメモの記録内容を教えて",
+      "raw": "{\"answer\": \"引継ぎには事象と対応状況を記録します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "担当を交代するときに残す内容は何ですか",
+      "raw": "{\"answer\": \"引継ぎには事象と対応状況を記録します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": false
+    },
+    {
+      "question": "隔離の承認者が不在ならどうしますか",
+      "raw": "{\"answer\": \"この FAQ には記載がありません。責任者に確認が必要です。\", \"needs_review\": true}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": true
+    },
+    {
+      "question": "承認後に隔離する際の製品名は何ですか",
+      "raw": "{\"answer\": \"この FAQ には記載がありません。責任者に確認が必要です。\", \"needs_review\": true}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": true
+    },
+    {
+      "question": "ログ分析に使う製品の名前は何ですか",
+      "raw": "{\"answer\": \"調査ログは原本を保存し、コピーで分析します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": false,
+      "both_ok": false,
+      "gold_needs_review": true
+    },
+    {
+      "question": "重大事象の報告期限は何分ですか",
+      "raw": "{\"answer\": \"この FAQ には記載がありません。責任者に確認が必要です。\", \"needs_review\": true}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": true
+    },
+    {
+      "question": "端末隔離を実行するコマンドを教えて",
+      "raw": "{\"answer\": \"端末隔離は責任者の承認後に実施します。\", \"needs_review\": false}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": false,
+      "both_ok": false,
+      "gold_needs_review": true
+    },
+    {
+      "question": "引継ぎ記録の保存先URLはどこですか",
+      "raw": "{\"answer\": \"この FAQ には記載がありません。責任者に確認が必要です。\", \"needs_review\": true}",
+      "format_ok": true,
+      "format_reason": "",
+      "content_ok": true,
+      "both_ok": true,
+      "gold_needs_review": true
+    }
+  ]
+}
