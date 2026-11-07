@@ -3,7 +3,7 @@
 - 公開リポジトリURL：https://github.com/masahikoyr/lecture-ai-engineering-2026
 - 取り組んだ宿題：**実装**
 - 実装済み：確認問題 `make_quiz` と、承認付き学習記録保存 `save_learning_log`。
-- 検証範囲：作成支援環境でPython 3.12.14・Pydantic AI 2.57.0を使用。模擬モデルによる承認フローと実際のファイル書込みを確認した。**Gemini実APIでの回答・ツール選択は未実行**であり、下記の2 requests等はGeminiの実測値ではない。
+- 検証範囲：作成支援環境の模擬モデル検証に加え、本人のCodespacesでGemini実APIによる保存の承認・拒否を実行した。両者の結果を分けて記録する。
 
 ## 演習
 
@@ -88,13 +88,43 @@
 
 承認画面があるだけで内容の正確性や機密情報の保護まで保証されるわけではない。保存内容を確認できる表示、操作権限、公開対象の制御を組み合わせる必要がある。また、Gitの除外設定は既に追跡済みのファイルや強制追加まで防ぐものではない。
 
-### Geminiでの最終確認（未実行）
+### 本人のCodespacesによるGemini実API確認（2026-11-07）
 
-`README_submission.md`のコマンドで、用語集検索・確認問題・保存の承認と拒否を本人のCodespacesで確認する。実APIを用いたモデル名、requests、ツール選択・回答の原文は、実行してから追記する。
+使用モデルは起動表示の `gemini-3.5-flash-lite`。本人の実行ログから以下を確認した。
+
+| 操作 | 実際の結果 |
+| --- | --- |
+| `uv sync --frozen` | 76 packagesを確認、依存関係は変更なし |
+| `uv run pytest -q` | **34 passed in 10.57s** |
+| LoRAの学習内容を指定して保存を依頼 | `DeferredToolRequests`で停止し、topic・learned・next_stepの確認画面を表示 |
+| `y`で承認 | `[approval] approved`。その後503で最終回答は得られなかったが、別コマンドで**LoRAのJSONが1件保存済み**であることを確認 |
+| もう一度保存を依頼し、`N`で拒否 | `[approval] denied`。traceの保存ツール返り値は `The tool call was denied.`。最終回答でも保存を行わなかったと説明 |
+| 拒否後のファイル件数を確認 | 補助コマンドの余分な閉じ括弧によりSyntaxError。件数はこの時点では未確認であり、1件のままと実測したとは記載しない |
+
+承認後に確認した保存日時は2026-11-07T04:27:38.652628+00:00（日本時間13:27:38）。個人の学習ログ本体・ファイル名は公開せず、保存件数と成功の事実を記録した。
+
+拒否ケースのtraceでは、次の2ツールが要求された。
+
+```text
+[tool call] search_glossary({'query': 'LoRA'})
+[tool call] save_learning_log({...})
+[tool return] save_learning_log -> The tool call was denied.
+[usage] input_tokens=2681, output_tokens=203, requests=3, tool_calls=1
+```
+
+save_learning_logの引数はtopic・learned・next_stepだった。学習内容の本文は個人の記録に当たるため、上記抜粋では省略した。拒否された保存は実行されないため、2件のtool call表示に対して、usageのtool_callsは実行された検索の1件となっている。
+
+模擬モデルでは2 requestsだったのに対し、この実APIの拒否ケースは検索も含めて3 requestsだった。モデルの選択によって呼出し順と回数が変わることを確認した。承認ケースは503で終了しusageが表示されていないため、呼出し回数・トークン数は不明として扱う。
+
+### 実APIで得た気づき
+
+承認後の503表示だけでは、保存が失敗したとは判断できなかった。実際にJSONは1件存在していたため、「保存という副作用の完了」と「モデルの最終回答の成功」を分けて扱う必要がある。失敗表示を見て保存を無条件に再実行すると、UUIDによる別ファイルとして二重保存される可能性がある。今後の改善として、ツールの保存成功を最終回答とは別に表示し、再実行時の重複を防ぐ設計が考えられる。これは今回の実装では未対応である。
+
+また、モデルが保存予定の学習内容を補完する場合があるため、承認画面ではテーマだけでなく本文と次の学習予定まで確認する必要がある。
 
 ## AI利用と出典
 
-ChatGPT（Codex）を実装・テスト・解答作成の支援に利用。上記の動作確認は作成支援環境で実施した。本人が実APIを実行したとは記録していない。
+ChatGPT（Codex）を実装・自動テスト・解答作成の支援に利用。模擬モデル検証は作成支援環境で、Gemini実API確認は本人のCodespacesで行った。本人が共有した実行ログを根拠に結果を追記した。
 
 - 講座公式：https://github.com/matsuolab/lecture-ai-engineering-2026
 - 講座`lec03-start`の`app/agent.py`・`app/tools.py`と、変更前コードのblob SHAが一致することを確認した。
