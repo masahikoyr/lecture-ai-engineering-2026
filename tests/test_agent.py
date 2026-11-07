@@ -18,7 +18,8 @@ def _parts(result, kind):
 
 
 def test_base_tools_are_registered_and_called():
-    model = TestModel()
+    # 書込みツールは別の承認テストで検証し、ここでは読取りツールの配線を確認する。
+    model = TestModel(call_tools=["search_glossary", "get_lecture_summary", "make_quiz"])
     with agent.override(model=model):
         result = agent.run_sync("LoRAとは？")
 
