@@ -1,0 +1,40 @@
+{
+  "executed_at_utc": "2026-11-07T03:50:17.810925+00:00",
+  "model": "FunctionModel / scripted-offline-model",
+  "external_api_called": false,
+  "scope": "モデルの選択と確認入力は模擬。Pydantic AIの停止・再開とJSON新規保存は実処理。保存先は一時フォルダ。",
+  "scenarios": [
+    {
+      "scenario": "approve",
+      "simulated_input": "y",
+      "pending_type": "DeferredToolRequests",
+      "files_before_approval": 0,
+      "files_after": 1,
+      "tool_outcome": "success",
+      "model_requests_in_resumed_flow": 2
+    },
+    {
+      "scenario": "deny",
+      "simulated_input": "n",
+      "pending_type": "DeferredToolRequests",
+      "files_before_approval": 0,
+      "files_after": 0,
+      "tool_outcome": "denied",
+      "model_requests_in_resumed_flow": 2
+    },
+    {
+      "scenario": "empty",
+      "simulated_input": "",
+      "pending_type": "DeferredToolRequests",
+      "files_before_approval": 0,
+      "files_after": 0,
+      "tool_outcome": "denied",
+      "model_requests_in_resumed_flow": 2
+    },
+    {
+      "scenario": "readonly_quiz",
+      "files_after": 0,
+      "model_requests_in_resumed_flow": 2
+    }
+  ]
+}

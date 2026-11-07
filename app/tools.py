@@ -5,11 +5,15 @@
 """
 
 import json
+import random
+from datetime import datetime, timezone
 from functools import cache
 from pathlib import Path
+from uuid import uuid4
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 MAX_RESULTS = 3
+LEARNING_LOG_DIR = Path(__file__).resolve().parent.parent / "learning_log"
 
 
 @cache
@@ -77,3 +81,44 @@ def get_lecture_summary(lecture: int) -> str:
         available = sorted(p.stem for p in (DATA_DIR / "lectures").glob("*.md"))
         return f"第{lecture}回の要点はまだありません。用意されている回: {', '.join(available)}"
     return path.read_text(encoding="utf-8")
+
+
+def make_quiz(lecture: int) -> str:
+    """指定した回の用語集から、復習用の確認問題を1問と答えを返す。
+
+    「第2回の確認問題を出して」のように、復習の問題を求められたときに使う。
+    lectureは1始まりの回番号。該当する用語がなければ、その旨を返す。
+    """
+    terms = [e for e in load_glossary() if e["lecture"] == lecture]
+    if not terms:
+        return f"第{lecture}回の確認問題に使える用語はありません。"
+    term = random.choice(terms)
+    return json.dumps({"lecture": lecture, "question": f"「{term['term']}」の意味は？",
+                       "answer": term["definition"]}, ensure_ascii=False)
+
+
+def save_learning_log(topic: str, learned: str, next_step: str = "") -> str:
+    """利用者が保存を依頼した学習記録をlearning_log/に新規JSONとして保存する。
+
+    topicは学習テーマ、learnedは学んだ内容、next_stepは次に学ぶこと。
+    会話の閲覧や説明だけでは使わず、保存したいと依頼されたときに使う。
+    保存にはCLIで利用者の承認が必要。APIキー・顧客情報は記録に含めない。
+    """
+    values = {"topic": topic, "learned": learned, "next_step": next_step}
+    limits = {"topic": 200, "learned": 4000, "next_step": 2000}
+    for key, value in values.items():
+        if not isinstance(value, str) or len(value) > limits[key]:
+            return json.dumps({"saved": False, "error": f"{key}は{limits[key]}文字以内の文字列にしてください。"}, ensure_ascii=False)
+    if not topic.strip() or not learned.strip():
+        return json.dumps({"saved": False, "error": "テーマと学んだ内容は空にできません。"}, ensure_ascii=False)
+    # 保存先は固定し、モデルからパスを受け取らない。既存ファイルは上書きしない。
+    if LEARNING_LOG_DIR.is_symlink():
+        return json.dumps({"saved": False, "error": "保存先がシンボリックリンクのため保存しません。"}, ensure_ascii=False)
+    LEARNING_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    if LEARNING_LOG_DIR.is_symlink():
+        return json.dumps({"saved": False, "error": "保存先がシンボリックリンクのため保存しません。"}, ensure_ascii=False)
+    record = {"created_at": datetime.now(timezone.utc).isoformat(), **values}
+    filename = f"{uuid4().hex}.json"
+    with (LEARNING_LOG_DIR / filename).open("x", encoding="utf-8") as f:
+        json.dump(record, f, ensure_ascii=False, indent=2)
+    return json.dumps({"saved": True, "file": f"learning_log/{filename}"}, ensure_ascii=False)

@@ -16,14 +16,15 @@ import inspect
 import json
 from pathlib import Path
 
-from pydantic_ai import Agent
-from pydantic_ai.exceptions import ModelHTTPError
+from pydantic_ai import Agent, DeferredToolRequests, DeferredToolResults
+from pydantic_ai.exceptions import ModelHTTPError, UsageLimitExceeded
 from fastmcp import Client
 from pydantic_ai.mcp import MCPToolset, StdioTransport
 from pydantic_ai.messages import ToolCallPart, ToolReturnPart
 from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.providers.google import GoogleProvider
+from pydantic_ai.usage import RunUsage, UsageLimits
 
 from app import tools
 from app.config import MODEL, api_error_message, get_api_key
@@ -32,17 +33,22 @@ INSTRUCTIONS = """\
 あなたはAIエンジニアリング講座（AIE2026）の学習支援エージェントです。
 - 用語や講座に固有のことを答える前に、必ず search_glossary で用語集を確認する。
 - 回の内容を聞かれたら get_lecture_summary を使う。
+- 確認問題を求められたら make_quiz を使う。
+- 学習記録の保存を明示的に依頼されたら save_learning_log を使う。説明だけでは保存しない。
+- 保存の承認はCLIが利用者に確認する。利用者が拒否した保存を繰り返し依頼しない。
+- ツールの結果が保存成功と示していない限り、保存できたとは答えない。
 - 用語集に見つからないことは、推測で断定せず「用語集にはない」と伝える。
 - 回答の最後に、関係する回（第N回）を示す。
 - 宿題の答えそのものは書かず、考え方のヒントで導く。
 """
 
 # モデルは実行時に渡す（テストではAPIを呼ばない TestModel に差し替えるため）
-agent = Agent(instructions=INSTRUCTIONS)
+agent = Agent(instructions=INSTRUCTIONS, output_type=[str, DeferredToolRequests])
 agent.tool_plain(tools.search_glossary)
 agent.tool_plain(tools.get_lecture_summary)
 
-# TODO(第3回 演習): tools.py に make_quiz を作り、ここで登録しよう
+agent.tool_plain(tools.make_quiz)
+agent.tool_plain(tools.save_learning_log, requires_approval=True)
 
 # 第5回: 使う MCP サーバーの設定ファイル。Claude Desktop や Cursor と同じ "mcpServers" 形式
 MCP_CONFIG = Path(__file__).resolve().parent / "mcp_servers.json"
@@ -109,6 +115,44 @@ def print_trace(result) -> None:
     print(f"[usage] {result.usage}")
 
 
+def ask_approvals(requests: DeferredToolRequests) -> DeferredToolResults:
+    """保存予定の引数を見せ、y/yes以外（空入力・EOFを含む）は拒否する。"""
+    if requests.calls:
+        raise ValueError("このCLIは外部実行待ちのツールには対応していません。")
+    results = DeferredToolResults()
+    for call in requests.approvals:
+        print(f"\n[承認待ち] {call.tool_name}")
+        print(json.dumps(call.args_as_dict(), ensure_ascii=False, indent=2))
+        print("保存先: learning_log/（新規ファイル。既存の記録は上書きしません）")
+        try:
+            allowed = input("この内容を保存しますか？ [y/N] ").strip().casefold() in {"y", "yes"}
+        except (EOFError, KeyboardInterrupt):
+            allowed = False
+            print("\n入力が中断されたため、保存を拒否しました。")
+        results.approvals[call.tool_call_id] = allowed
+        print("[approval] approved" if allowed else "[approval] denied")
+    return results
+
+
+def run_with_approval(target: Agent, question: str, model, trace: bool = False):
+    """承認待ちで停止し、利用者の判断と履歴を渡して同じ呼び出しを再開する。"""
+    usage = RunUsage()
+    limits = UsageLimits(request_limit=8)
+    result = target.run_sync(question, model=model, usage=usage, usage_limits=limits)
+    rounds = 0
+    while isinstance(result.output, DeferredToolRequests):
+        if rounds >= 3:
+            raise ValueError("承認待ちが繰り返されたため終了します。未承認の処理は実行しません。")
+        if trace:
+            # 中間では履歴全体を繰り返し出さず、未実行であることを示す。
+            print(f"[deferred] approval_requests={len(result.output.approvals)}（ツール本体は未実行）")
+        decisions = ask_approvals(result.output)
+        result = target.run_sync(model=model, message_history=result.all_messages(),
+                                 deferred_tool_results=decisions, usage=usage, usage_limits=limits)
+        rounds += 1
+    return result
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="学習支援エージェントに質問する")
     parser.add_argument("question", nargs="?")
@@ -128,9 +172,12 @@ def main() -> None:
     if args.mcp:
         print("[tools] MCP サーバー（app/mcp_servers.json）")
     try:
-        result = target.run_sync(args.question, model=build_model())
+        result = run_with_approval(target, args.question, model=build_model(), trace=args.trace)
     except ModelHTTPError as e:
-        print(api_error_message(e.status_code, str(e.body)[:200]))
+        print(api_error_message(e.status_code))
+        raise SystemExit(1)
+    except (UsageLimitExceeded, ValueError, OSError) as e:
+        print(f"処理を完了できませんでした（{type(e).__name__}）。保存先と実行状況を確認してください。")
         raise SystemExit(1)
     print(result.output)
     if args.trace:

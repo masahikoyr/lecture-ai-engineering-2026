@@ -1,0 +1,64 @@
+# APIなしの実行記録
+モデル選択と入力は模擬。Pydantic AIの承認処理とファイル保存は実行。
+
+
+## approve / 模擬入力='y'
+[deferred] approval_requests=1（ツール本体は未実行）
+
+[承認待ち] save_learning_log
+{
+  "topic": "LoRA",
+  "learned": "基盤モデルを固定し追加行列を学習する。",
+  "next_step": "用語集を読み直す。"
+}
+保存先: learning_log/（新規ファイル。既存の記録は上書きしません）
+[approval] approved
+
+--- trace ---
+[tool call]   save_learning_log({'topic': 'LoRA', 'learned': '基盤モデルを固定し追加行列を学習する。', 'next_step': '用語集を読み直す。'})
+[tool return] save_learning_log -> {"saved": true, "file": "learning_log/10e104438f024bd8ab4f367c5bdf23cc.json"}…
+[usage] RunUsage(input_tokens=109, output_tokens=20, requests=2, tool_calls=1)
+
+
+## deny / 模擬入力='n'
+[deferred] approval_requests=1（ツール本体は未実行）
+
+[承認待ち] save_learning_log
+{
+  "topic": "LoRA",
+  "learned": "基盤モデルを固定し追加行列を学習する。",
+  "next_step": "用語集を読み直す。"
+}
+保存先: learning_log/（新規ファイル。既存の記録は上書きしません）
+[approval] denied
+
+--- trace ---
+[tool call]   save_learning_log({'topic': 'LoRA', 'learned': '基盤モデルを固定し追加行列を学習する。', 'next_step': '用語集を読み直す。'})
+[tool return] save_learning_log -> The tool call was denied.…
+[usage] RunUsage(input_tokens=108, output_tokens=20, requests=2)
+
+
+## empty / 模擬入力=''
+[deferred] approval_requests=1（ツール本体は未実行）
+
+[承認待ち] save_learning_log
+{
+  "topic": "LoRA",
+  "learned": "基盤モデルを固定し追加行列を学習する。",
+  "next_step": "用語集を読み直す。"
+}
+保存先: learning_log/（新規ファイル。既存の記録は上書きしません）
+[approval] denied
+
+--- trace ---
+[tool call]   save_learning_log({'topic': 'LoRA', 'learned': '基盤モデルを固定し追加行列を学習する。', 'next_step': '用語集を読み直す。'})
+[tool return] save_learning_log -> The tool call was denied.…
+[usage] RunUsage(input_tokens=108, output_tokens=20, requests=2)
+
+
+## readonly_quiz
+
+--- trace ---
+[tool call]   make_quiz({'lecture': 2})
+[tool return] make_quiz -> {"lecture": 2, "question": "「事前学習」の意味は？", "answer": "大量の汎用テキストで、次のトークンを予測するようにモデルを学習させる最初の段階。言語の知識や一般的な常識の多くはここで身につく。"}…
+[usage] RunUsage(input_tokens=110, output_tokens=10, requests=2, tool_calls=1)
