@@ -124,8 +124,45 @@ def open_index(path: Path):
         db.close()
 
 
-def search(query: str) -> list[dict]:
-    """質問を埋め込み、近いページを最大RAG_TOP_K件返す。"""
+def add_neighbor_pages(hits: list[dict], *, pages: list[dict] | None = None) -> list[dict]:
+    """検索上位のページを先に返し、同じ資料のPDF前後1ページを重複なしで追加する。
+
+    追加ページには類似度の距離を付けない。seed_page_idsで追加元を追跡できる。
+    ページ番号に欠番がある場合、その先のページまで飛んで追加しない。
+    """
+    if not hits:
+        return []
+    pages = load_pages(RAG_SOURCE) if pages is None else pages
+    by_id = {page["page_id"]: page for page in pages}
+    by_position = {(page["document_id"], page["page"]): page for page in pages}
+    if len(by_id) != len(pages) or len(by_position) != len(pages):
+        raise ValueError("資料に重複したページIDかページ番号があります。")
+    results = {}
+    for hit in hits:
+        page = by_id.get(hit["page_id"])
+        if page is None or (page["document_id"], page["page"]) != (hit["document_id"], hit["page"]):
+            raise ValueError("検索DBと教材JSONのページ情報が一致しません。")
+        results.setdefault(hit["page_id"], {**hit, "retrieval_role": "seed", "seed_page_ids": []})
+    for seed_id in list(results):
+        seed = by_id[seed_id]
+        for offset in (-1, 1):
+            page = by_position.get((seed["document_id"], seed["page"] + offset))
+            if page is None:
+                continue
+            entry = results.setdefault(page["page_id"], {
+                **page, "retrieval_role": "neighbor", "seed_page_ids": [],
+            })
+            if seed_id not in entry["seed_page_ids"]:
+                entry["seed_page_ids"].append(seed_id)
+    return list(results.values())
+
+
+def search(query: str, *, include_neighbors: bool = False) -> list[dict]:
+    """質問を埋め込み、近いページを最大RAG_TOP_K件返す。
+
+    include_neighbors=Trueの場合、そのヒットの前後1ページを追加する。
+    追加分の再検索や埋め込みは行わない。既定値では配布版の通常検索を維持する。
+    """
     if not isinstance(query, str) or not query.strip():
         raise ValueError("検索語が空です。")
     with open_index(RAG_DB) as db:
@@ -135,7 +172,8 @@ def search(query: str) -> list[dict]:
                    vec_distance_cosine(embedding, ?) AS distance
             FROM chunks ORDER BY distance, page_id LIMIT ?
         """, (sqlite_vec.serialize_float32(vector), RAG_TOP_K))
-        return [dict(row) for row in rows]
+        hits = [dict(row) for row in rows]
+    return add_neighbor_pages(hits) if include_neighbors else hits
 
 
 def search_graph(query: str) -> dict:
@@ -201,8 +239,9 @@ def run_full_context(agent, question: str, model, instructions: str, prompt_temp
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="エージェントを使わず、講義資料の検索だけを実行する")
     parser.add_argument("query", help="調べたい内容")
+    parser.add_argument("--neighbors", action="store_true", help="同じ資料の前後1ページも追加する")
     args = parser.parse_args()
-    for i, result in enumerate(search(args.query), 1):
+    for i, result in enumerate(search(args.query, include_neighbors=args.neighbors), 1):
         print(f"\n{'=' * 60}\n検索結果 {i}\n{'=' * 60}")
         print(f"講義: {result['document_title']}")
         print(f"章: {result['section']}")

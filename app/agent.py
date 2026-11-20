@@ -21,7 +21,7 @@ from pathlib import Path
 from contextlib import nullcontext
 from time import perf_counter
 
-from pydantic_ai import Agent
+from pydantic_ai import Agent, Tool
 from pydantic_ai.exceptions import ModelHTTPError
 from fastmcp import Client
 from pydantic_ai.mcp import MCPToolset, StdioTransport
@@ -80,6 +80,12 @@ FULL_CONTEXT_PROMPT = "<資料>\n{materials}\n</資料>\n\n質問: {question}"
 # モデルは実行時に渡す（テストではAPIを呼ばない TestModel に差し替えるため）
 agent = Agent(instructions=INSTRUCTIONS)
 agent.tool_plain(tools.search_materials)
+
+
+def neighbor_search_tool() -> Tool:
+    """取得処理以外の条件を変えずに比較できるよう、ツール名・説明・引数を通常版とそろえる。"""
+    return Tool(tools.search_materials_with_neighbors, name="search_materials",
+                description=inspect.cleandoc(tools.search_materials.__doc__))
 
 # TODO(第3回 演習): tools.py に make_quiz を作り、ここで登録しよう
 
@@ -182,6 +188,7 @@ def main() -> None:
     modes.add_argument("--graph", action="store_true", help="検索結果からグラフをたどり、候補ページを読んで答える")
     modes.add_argument("--tree", action="store_true", help="目次をたどり、必要なページを読んで答える")
     modes.add_argument("--full-context", action="store_true", help="検索せず、lectures.jsonの全資料を一度に渡す")
+    modes.add_argument("--neighbors", action="store_true", help="通常検索に同じ資料の前後1ページを追加する")
     parser.add_argument("--list-tools", action="store_true", help="モデルに見えるツール一覧を表示して終了する（APIキー不要）")
     args = parser.parse_args()
 
@@ -191,6 +198,8 @@ def main() -> None:
         mode = target.override(instructions=TREE_INSTRUCTIONS, tools=[tools.browse_tree])
     elif args.graph:
         mode = target.override(instructions=GRAPH_INSTRUCTIONS, tools=[tools.search_graph])
+    elif args.neighbors:
+        mode = target.override(tools=[neighbor_search_tool()])
     with mode:
         if args.list_tools:
             if args.full_context:

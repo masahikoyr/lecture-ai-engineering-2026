@@ -81,21 +81,31 @@ def get_lecture_summary(lecture: int) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def search_materials(query: str) -> str:
-    """第1〜3回の本講義資料を検索し、関連ページの本文・タイトル・ページ番号を返す。
-
-    queryに調べたい内容を指定する。
-    """
+def _search_materials(query: str, *, include_neighbors: bool = False) -> str:
     from google.genai.errors import APIError
     import sqlite3
     from app.retrieval import search
 
     try:
-        return json.dumps({"results": search(query)}, ensure_ascii=False)
+        hits = search(query, include_neighbors=True) if include_neighbors else search(query)
+        return json.dumps({"results": hits}, ensure_ascii=False)
     except (ValueError, FileNotFoundError, sqlite3.Error) as e:
         return json.dumps({"error": str(e), "results": []}, ensure_ascii=False)
     except APIError as e:
         return json.dumps({"error": api_error_message(e.code), "results": []}, ensure_ascii=False)
+
+
+def search_materials(query: str) -> str:
+    """第1〜3回の本講義資料を検索し、関連ページの本文・タイトル・ページ番号を返す。
+
+    queryに調べたい内容を指定する。
+    """
+    return _search_materials(query)
+
+
+def search_materials_with_neighbors(query: str) -> str:
+    """通常検索に同じ資料の前後1ページを追加する（公開ツール名・説明は通常版とそろえる）。"""
+    return _search_materials(query, include_neighbors=True)
 
 
 def browse_tree(node_id: str | None = None) -> str:
