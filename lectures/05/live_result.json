@@ -1,0 +1,1109 @@
+{
+  "schema_version": 1,
+  "evidence_type": "live_gemini_api",
+  "created_at": "2026-11-21T03:24:42.337743+00:00",
+  "conditions": {
+    "model": "gemini-3.5-flash-lite",
+    "temperature": 0,
+    "embedding_model": "gemini-embedding-001",
+    "document_ids": [
+      "lec01-main",
+      "lec02-main",
+      "lec03-main"
+    ],
+    "top_k": 5,
+    "neighbor_radius": 1,
+    "source_sha256": "f6022c177ec1b5575b56d21307a5ae2aa09c586047398a17e1e4b86a56e99dce",
+    "index_sha256": "600d7a3633d84c21b6b26d511f9cd701d7dbee32bfe8eab0fd6fee3affb0f69e",
+    "code_sha256": {
+      "app/retrieval.py": "e094de7825c73c32829cc20b719e3c73ffa666ac52fdbdab8eaa58d0a0e187ed",
+      "app/tools.py": "5e277aebba443c7ed40d21cc5da12245f47a3a954c9d25457d4f18efa3dc9205",
+      "app/agent.py": "88a27e74b532b2caabea39024611874e1c5afdd6fad404f063e8c1d07cd25ea8",
+      "app/config.py": "da94eb1bb1e73664989076e8e993dd2a10b2871fe30146e48acbae7e90e4e5c3",
+      "scripts/compare_lec05.py": "b77cc063300e34eb03748d457214bafa8947c72472436c4df4412b1aab3e411c",
+      "lectures/05/comparison_cases.json": "7b09199fe9e6fbef68e00ef683ebe9eeff21b18f8222d8b4194a7ec431ae0d2b",
+      "uv.lock": "9a9bcb5565777fee91a96a219019e3a42873e48166bdb5f96d2ed285d6dbe08b"
+    },
+    "cost_scope": "Generation API estimate only; excludes query embedding and index construction. Null means unavailable, not zero.",
+    "ordering": "lora: baseline then neighbors; memory: neighbors then baseline; unanswerable: baseline then neighbors"
+  },
+  "cases": [
+    {
+      "id": "lora",
+      "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？ QLoRAは何を加えますか？",
+      "reference_pages": [
+        "lec02-main-p052"
+      ],
+      "expected_behavior": "元の重みWを固定し、低ランク行列A・Bを学習する。QLoRAは元の重みの4bit量子化を加える。根拠を示す。"
+    },
+    {
+      "id": "memory",
+      "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか？",
+      "reference_pages": [
+        "lec03-main-p013",
+        "lec03-main-p039",
+        "lec03-main-p040"
+      ],
+      "expected_behavior": "同一セッション内の履歴要約と外部保存・読み戻しを区別する。OpenClawの例では日々のメモを見直し、基準を超えたものだけ残す。すべて長期メモリになると断定しない。"
+    },
+    {
+      "id": "unanswerable",
+      "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください。",
+      "reference_pages": [],
+      "expected_behavior": "講義資料には今回のシステムの実測ログがないと伝え、時間や正答率を創作しない。"
+    }
+  ],
+  "runs": [
+    {
+      "case_id": "lora",
+      "mode": "baseline",
+      "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？ QLoRAは何を加えますか？",
+      "started_at": "2026-11-21T03:24:42.512860+00:00",
+      "status": "completed",
+      "behavior_flags": [],
+      "answer": "講義資料によると、LoRAおよびQLoRAの仕組みは以下のようになっています。\n\n* **LoRAは何を固定し何を学習するか**\n  * **固定するもの**: 元の重み $W$（本体）は固定して学習しません（第2回・PDF p.52）。\n  * **学習するもの**: 細長い2つの小さな行列の積（低ランク）で表される変化分（追加部分の小さな行列 $A$・$B$）だけを学習します（第2回・PDF p.51, p.52）。\n\n* **QLoRAは何を加えるか**\n  * LoRAの手法に加えて、**元の重みを4bitに圧縮（数値を粗く保存）すること**を加えます（第2回・PDF p.51, p.52）。",
+      "trace": [
+        {
+          "kind": "call",
+          "tool": "search_materials",
+          "tool_call_id": "call_16706407923062645555",
+          "args": {
+            "query": "LoRA 固定 学習 QLoRA 加える"
+          }
+        },
+        {
+          "kind": "return",
+          "tool": "search_materials",
+          "tool_call_id": "call_16706407923062645555",
+          "error": null,
+          "pages": [
+            {
+              "page_id": "lec02-main-p052",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "LoRA と QLoRA ：大きなモデルも GPU 1 台で調整できる",
+              "page": 52,
+              "distance": 0.2185288667678833,
+              "content_characters": 717,
+              "content_sha256": "5874fee556b3b0ea4ae2a572791d11048b554e48d9074936b7fd9d35e299d044"
+            },
+            {
+              "page_id": "lec02-main-p051",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "PEFT ：モデル全体ではなく、一部だけを学習する",
+              "page": 51,
+              "distance": 0.2375873327255249,
+              "content_characters": 771,
+              "content_sha256": "d2a043125fe674f0b9426763192a9fba54b4fb019359ed7b982a8c48f92a24a9"
+            },
+            {
+              "page_id": "lec02-main-p060",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "今日の演習： QLoRA で出力形式を矯正し、効果を測る",
+              "page": 60,
+              "distance": 0.2610666751861572,
+              "content_characters": 357,
+              "content_sha256": "0e9c05c39bcc85303dd4f3aabb747a82997d2858398ccda722b31eddb24c654a"
+            },
+            {
+              "page_id": "lec02-main-p047",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "根拠と諸説：知識の追加は RAG が効きやすい",
+              "page": 47,
+              "distance": 0.2838040292263031,
+              "content_characters": 640,
+              "content_sha256": "66912245a40e43b5f4e1755bf5d51999c14f12920ef65374cfff62625194ec9d"
+            },
+            {
+              "page_id": "lec02-main-p061",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "演習の進め方と提出物（仮）",
+              "page": 61,
+              "distance": 0.28742292523384094,
+              "content_characters": 471,
+              "content_sha256": "c0d3d48ef3e00d1f769a2012667ce9e7385bd67fc951dc3c4d21d557cfe7d59c"
+            }
+          ]
+        }
+      ],
+      "input_tokens": 3028,
+      "output_tokens": 202,
+      "model_requests": 2,
+      "generation_cost_usd": "0.0014134",
+      "manual_review": {
+        "answer_correct": null,
+        "citations_supported": null,
+        "useful_added_pages": [],
+        "unnecessary_added_pages": [],
+        "notes": "未確認"
+      },
+      "elapsed_seconds": 3.676083,
+      "finished_at": "2026-11-21T03:24:46.188946+00:00"
+    },
+    {
+      "case_id": "lora",
+      "mode": "neighbors",
+      "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？ QLoRAは何を加えますか？",
+      "started_at": "2026-11-21T03:24:46.189524+00:00",
+      "status": "completed",
+      "behavior_flags": [],
+      "answer": "第2回の講義資料によると、LoRAとQLoRAの仕組みについて以下のように説明されています。\n\n* **LoRA（Low-Rank Adaptation）**\n  * **固定するもの：** 本体の重み（Pretrained Weights $W$）は固定し、学習しません（第2回・PDF p.52）。\n  * **学習するもの：** 小さな追加部分である、細長い2つの行列（低ランクの行列 $A$ と $B$）の積で表される「差分（変化分）」だけを学習します（第2回・PDF p.51, 52）。\n\n* **QLoRA（Quantized LoRA）**\n  * LoRAの仕組み（本体を固定し、小さな行列だけを学習する仕組み）に加えて、**元の重みを4bit（数値を粗く保存）に圧縮する**という処理を加えます（第2回・PDF p.51, 52）。これにより、さらに少ないメモリ（GPU 1台など）での調整を可能にしています（第2回・PDF p.51, 52）。",
+      "trace": [
+        {
+          "kind": "call",
+          "tool": "search_materials",
+          "tool_call_id": "call_17700917208552081026",
+          "args": {
+            "query": "LoRA QLoRA 固定 学習"
+          }
+        },
+        {
+          "kind": "return",
+          "tool": "search_materials",
+          "tool_call_id": "call_17700917208552081026",
+          "error": null,
+          "pages": [
+            {
+              "page_id": "lec02-main-p052",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "LoRA と QLoRA ：大きなモデルも GPU 1 台で調整できる",
+              "page": 52,
+              "distance": 0.2296837419271469,
+              "retrieval_role": "seed",
+              "seed_page_ids": [
+                "lec02-main-p051"
+              ],
+              "content_characters": 717,
+              "content_sha256": "5874fee556b3b0ea4ae2a572791d11048b554e48d9074936b7fd9d35e299d044"
+            },
+            {
+              "page_id": "lec02-main-p051",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "PEFT ：モデル全体ではなく、一部だけを学習する",
+              "page": 51,
+              "distance": 0.24355672299861908,
+              "retrieval_role": "seed",
+              "seed_page_ids": [
+                "lec02-main-p052"
+              ],
+              "content_characters": 771,
+              "content_sha256": "d2a043125fe674f0b9426763192a9fba54b4fb019359ed7b982a8c48f92a24a9"
+            },
+            {
+              "page_id": "lec02-main-p060",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "今日の演習： QLoRA で出力形式を矯正し、効果を測る",
+              "page": 60,
+              "distance": 0.267177551984787,
+              "retrieval_role": "seed",
+              "seed_page_ids": [
+                "lec02-main-p061"
+              ],
+              "content_characters": 357,
+              "content_sha256": "0e9c05c39bcc85303dd4f3aabb747a82997d2858398ccda722b31eddb24c654a"
+            },
+            {
+              "page_id": "lec02-main-p061",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "演習の進め方と提出物（仮）",
+              "page": 61,
+              "distance": 0.29299941658973694,
+              "retrieval_role": "seed",
+              "seed_page_ids": [
+                "lec02-main-p060"
+              ],
+              "content_characters": 471,
+              "content_sha256": "c0d3d48ef3e00d1f769a2012667ce9e7385bd67fc951dc3c4d21d557cfe7d59c"
+            },
+            {
+              "page_id": "lec02-main-p047",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "根拠と諸説：知識の追加は RAG が効きやすい",
+              "page": 47,
+              "distance": 0.29319456219673157,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 640,
+              "content_sha256": "66912245a40e43b5f4e1755bf5d51999c14f12920ef65374cfff62625194ec9d"
+            },
+            {
+              "page_id": "lec02-main-p053",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "チャットボットの場合：何を FT し、何を FT しないか",
+              "page": 53,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p052"
+              ],
+              "content_characters": 468,
+              "content_sha256": "79ba5a64a1754de3c5d6d60653838130ca75373b9e89129a7d24a4e9351bd0ad"
+            },
+            {
+              "page_id": "lec02-main-p050",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "判断の順番：測る → 分ける → プロンプト → Fine-Tuning",
+              "page": 50,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p051"
+              ],
+              "content_characters": 311,
+              "content_sha256": "156edbf2d3d229981c9c59ec189a5b348ef068268913a996b2070e01d36cf1ea"
+            },
+            {
+              "page_id": "lec02-main-p059",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "第 2 回のまとめ： 4 つの芯と、明日やること",
+              "page": 59,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p060"
+              ],
+              "content_characters": 492,
+              "content_sha256": "f0c8f80518c23463fd49ff0e50080c19f100dc16154c9347c06b9d52181736d9"
+            },
+            {
+              "page_id": "lec02-main-p062",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "次回： AI エージェント。今日の性質が設計の前提になる",
+              "page": 62,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p061"
+              ],
+              "content_characters": 518,
+              "content_sha256": "8f3227c22f8dc73e1f0addba38cf553210cdda954c4cf506c84d8f4ef41c74bc"
+            },
+            {
+              "page_id": "lec02-main-p046",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "小規模な FT は振る舞いに強く、知識の追加は苦手",
+              "page": 46,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p047"
+              ],
+              "content_characters": 268,
+              "content_sha256": "16eafe489e7e8aab9a6353db5da16c88394df1afe37fdbc8116d33e63a979816"
+            },
+            {
+              "page_id": "lec02-main-p048",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "選んだモデルを、いつ・どう直すか",
+              "title": "継続事前学習（ CPT ）：知識・言語を足す追加学習",
+              "page": 48,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p047"
+              ],
+              "content_characters": 548,
+              "content_sha256": "828422b7b10759869c83eace0f3eb36f1d0e9fcf9d1c39dad5e595311ff89921"
+            }
+          ]
+        }
+      ],
+      "input_tokens": 5547,
+      "output_tokens": 263,
+      "model_requests": 2,
+      "generation_cost_usd": "0.0023216",
+      "manual_review": {
+        "answer_correct": null,
+        "citations_supported": null,
+        "useful_added_pages": [],
+        "unnecessary_added_pages": [],
+        "notes": "未確認"
+      },
+      "elapsed_seconds": 2.993857,
+      "finished_at": "2026-11-21T03:24:49.183387+00:00"
+    },
+    {
+      "case_id": "memory",
+      "mode": "neighbors",
+      "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか？",
+      "started_at": "2026-11-21T03:24:49.185130+00:00",
+      "status": "completed",
+      "behavior_flags": [],
+      "answer": "ご質問ありがとうございます。AIエージェントのメモリとコンテキスト管理の仕組みについてですね。\n\n講義資料を確認すると、コンパクションとセッションをまたぐメモリ（外の保存先）の仕組み、および日々のメモの扱いについて以下のように説明されています。\n\n### 1. コンパクションとセッションをまたぐメモリの違い\n* **コンパクション（同じセッション内）**\n  * **場所:** コンテキストの中（同じセッション内）で行われます（第3回・PDF p.39）。\n  * **役割:** 古い履歴や長くなったやり取りを要約して詰めることで、コンテキストの上限対策を行います（第3回・PDF p.38, 39）。要約に置き換えた範囲の情報は圧縮されます（第3回・PDF p.65）。\n* **セッションをまたぐメモリ（外の保存先）**\n  * **場所:** コンテキストの外にある保存先（ファイルやデータベースなど）です（第3回・PDF p.13, 39）。\n  * **役割:** 別のセッション（別の日など）に変わっても情報を引き継ぐために、エージェントがファイルに書き出したり（あるいは自動で記録したり）、必要に応じて読み戻したりします（第3回・PDF p.13, 39）。\n\n### 2. 日々のメモはすべて長期メモリに入りますか？\n* **資料における実装例（OpenClaw等）の考え方:**\n  * 日々のメモ（例：`memory/日付.md`）に記録された情報がすべてそのまま長期メモリ（`MEMORY.md`など）に入るわけではありません（第3回・PDF p.40）。\n  * 夜間などの見直しプロセス（dreamingなど）を通じて、重複を除いたり、何度も出てくる重要なテーマを探したりして、**基準を超えたものだけ**が長期メモリに移されます（第3回・PDF p.40）。\n  * 一度きりの調べものなどは日々のメモに残るだけであり、長期メモリが膨らまないように設計されています（第3回・PDF p.40）。また、「すべてを蓄積すると、古い情報や誤りも一緒に戻ってくるため、何を残し、何を消すかを設計する」とされています（第3回・PDF p.38）。\n\nこれらを踏まえて、コンテキストの容量制限やセッションの境界、情報を取捨選択する理由について考えてみてください。",
+      "trace": [
+        {
+          "kind": "call",
+          "tool": "search_materials",
+          "tool_call_id": "call_12082336556361986575",
+          "args": {
+            "query": "コンパクション セッション メモリ"
+          }
+        },
+        {
+          "kind": "return",
+          "tool": "search_materials",
+          "tool_call_id": "call_12082336556361986575",
+          "error": null,
+          "pages": [
+            {
+              "page_id": "lec03-main-p065",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：メモリと Context Engineering の最新動向",
+              "page": 65,
+              "distance": 0.31211861968040466,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 633,
+              "content_sha256": "4e0b2c468c0ebbfc0ceb9ae5b0f5ae41b24b21ed052c509cdf02629884034522"
+            },
+            {
+              "page_id": "lec03-main-p039",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "実装例：Claude",
+              "page": 39,
+              "distance": 0.32197248935699463,
+              "retrieval_role": "seed",
+              "seed_page_ids": [
+                "lec03-main-p038",
+                "lec03-main-p040"
+              ],
+              "content_characters": 538,
+              "content_sha256": "56d5907f13fe916bfa33cdcd6c511e86302b4d31220195557fbc17ed8b3d51ca"
+            },
+            {
+              "page_id": "lec03-main-p038",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "メモリがないと、毎回ゼロからやり直しになる",
+              "page": 38,
+              "distance": 0.3404340445995331,
+              "retrieval_role": "seed",
+              "seed_page_ids": [
+                "lec03-main-p039"
+              ],
+              "content_characters": 467,
+              "content_sha256": "046b3869541bc4416ea419e94e392831d6504e7c438cafea78f3ac979b2ad982"
+            },
+            {
+              "page_id": "lec03-main-p013",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 2 エージェントを組み立てる",
+              "title": "メモリ",
+              "page": 13,
+              "distance": 0.3674025535583496,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 361,
+              "content_sha256": "66d9911abc51a19bd1d2b878bd116281a41d0d7430b928704684b684b69969f8"
+            },
+            {
+              "page_id": "lec03-main-p040",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "実装例：OpenClaw",
+              "page": 40,
+              "distance": 0.3688494563102722,
+              "retrieval_role": "seed",
+              "seed_page_ids": [
+                "lec03-main-p039"
+              ],
+              "content_characters": 383,
+              "content_sha256": "0a184c54800d421ab2242dcb4d28f72443aab83dd136a7904fd8737c7dd4afdd"
+            },
+            {
+              "page_id": "lec03-main-p064",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：長時間タスクの実行能力の最新動向",
+              "page": 64,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p065"
+              ],
+              "content_characters": 802,
+              "content_sha256": "1ebba9f4c32d52491e93103109f7c71b2e6884e298a3226032960d2307f62400"
+            },
+            {
+              "page_id": "lec03-main-p066",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：設定ファイルの標準化（AGENTS.md・Skills）の最新動向",
+              "page": 66,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p065"
+              ],
+              "content_characters": 816,
+              "content_sha256": "6fbd916e0259cde2a0585618f95620c095f9ed1f644729952e5e84af2a78de40"
+            },
+            {
+              "page_id": "lec03-main-p037",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "Part 6 メモリ",
+              "page": 37,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p038"
+              ],
+              "content_characters": 66,
+              "content_sha256": "cbe0ab0226c6dd6c3b3466eb2eccfa4cdaa0c88ef50f59d08f2e66aa239a1f61"
+            },
+            {
+              "page_id": "lec03-main-p012",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 2 エージェントを組み立てる",
+              "title": "ループ：ツールの結果を自動的にモデルに入力する",
+              "page": 12,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p013"
+              ],
+              "content_characters": 213,
+              "content_sha256": "eef3b92641ed4a95ee71f7944a2649baa82fe62395feb2184f793979c6f6bb36"
+            },
+            {
+              "page_id": "lec03-main-p014",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 2 エージェントを組み立てる",
+              "title": "エージェント＝モデル＋ハーネス",
+              "page": 14,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p013"
+              ],
+              "content_characters": 269,
+              "content_sha256": "0873586f990633747901c4ba10180e2614a7b313fd115313f668c169b029cc94"
+            },
+            {
+              "page_id": "lec03-main-p041",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "Skill：繰り返す作業の手順をファイルに保存しておく",
+              "page": 41,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p040"
+              ],
+              "content_characters": 506,
+              "content_sha256": "945b3a79914ad1253eabc5b64c8e5a6f6a031239ce535b6085271e7808e4d7ef"
+            }
+          ]
+        }
+      ],
+      "input_tokens": 4746,
+      "output_tokens": 556,
+      "model_requests": 2,
+      "generation_cost_usd": "0.0028138",
+      "manual_review": {
+        "answer_correct": null,
+        "citations_supported": null,
+        "useful_added_pages": [],
+        "unnecessary_added_pages": [],
+        "notes": "未確認"
+      },
+      "elapsed_seconds": 3.252285,
+      "finished_at": "2026-11-21T03:24:52.437420+00:00"
+    },
+    {
+      "case_id": "memory",
+      "mode": "baseline",
+      "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか？",
+      "started_at": "2026-11-21T03:24:52.439434+00:00",
+      "status": "completed",
+      "behavior_flags": [],
+      "answer": "第3回の講義資料に基づき、それぞれの違いや仕組みについて解説します。\n\n### 1. コンパクションとセッションをまたぐメモリの違い\n\n* **コンパクション（履歴の要約）**\n  * **範囲**：同じセッション（コンテキスト）の中（第3回・PDF p.39, 65）。\n  * **仕組み**：長くなった古い履歴を要約に置き換えて、コンテキストの中に圧縮して収める機能です（第3回・PDF p.39）。\n* **セッションをまたぐメモリ（メモリツールなど）**\n  * **範囲**：セッションをまたぐ外の保存先（第3回・PDF p.39）。\n  * **仕組み**：セッションが終了しても消えない外部の保存先（ファイルやデータベースなど）に情報を書き出し、次回の新しいセッションや別の会話の最初に読み込ませる仕組みです（第3回・PDF p.13, 39, 40）。\n\n---\n\n### 2. 日々のメモはすべて長期メモリに入りますか？\n\n講義資料中のOpenClawの実装例（第3回・PDF p.40）において、日々のメモ（`memory/日付.md`）と長期メモリ（`MEMORY.md`）の関係は以下のように説明されています。\n\n* 日々のメモには「一度きりの調べもの」なども含まれますが、それらがすべてそのまま長期メモリに移るわけではありません（第3回・PDF p.40）。\n* 毎晩の自動見直し（dreaming）の過程で、重複の排除やテーマの比較が行われ、**「基準を超えたものだけ」**が長期メモリに残される仕組みになっています（第3回・PDF p.40）。すべてを蓄積すると古い情報や不要な情報まで戻ってしまうため、何を残し何を消すかの設計が重要視されています（第3回・PDF p.38, 40）。",
+      "trace": [
+        {
+          "kind": "call",
+          "tool": "search_materials",
+          "tool_call_id": "call_16339732486198800825",
+          "args": {
+            "query": "コンパクション セッション メモリ"
+          }
+        },
+        {
+          "kind": "return",
+          "tool": "search_materials",
+          "tool_call_id": "call_16339732486198800825",
+          "error": null,
+          "pages": [
+            {
+              "page_id": "lec03-main-p065",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：メモリと Context Engineering の最新動向",
+              "page": 65,
+              "distance": 0.31211861968040466,
+              "content_characters": 633,
+              "content_sha256": "4e0b2c468c0ebbfc0ceb9ae5b0f5ae41b24b21ed052c509cdf02629884034522"
+            },
+            {
+              "page_id": "lec03-main-p039",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "実装例：Claude",
+              "page": 39,
+              "distance": 0.32197248935699463,
+              "content_characters": 538,
+              "content_sha256": "56d5907f13fe916bfa33cdcd6c511e86302b4d31220195557fbc17ed8b3d51ca"
+            },
+            {
+              "page_id": "lec03-main-p038",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "メモリがないと、毎回ゼロからやり直しになる",
+              "page": 38,
+              "distance": 0.3404340445995331,
+              "content_characters": 467,
+              "content_sha256": "046b3869541bc4416ea419e94e392831d6504e7c438cafea78f3ac979b2ad982"
+            },
+            {
+              "page_id": "lec03-main-p013",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 2 エージェントを組み立てる",
+              "title": "メモリ",
+              "page": 13,
+              "distance": 0.3674025535583496,
+              "content_characters": 361,
+              "content_sha256": "66d9911abc51a19bd1d2b878bd116281a41d0d7430b928704684b684b69969f8"
+            },
+            {
+              "page_id": "lec03-main-p040",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "実装例：OpenClaw",
+              "page": 40,
+              "distance": 0.3688494563102722,
+              "content_characters": 383,
+              "content_sha256": "0a184c54800d421ab2242dcb4d28f72443aab83dd136a7904fd8737c7dd4afdd"
+            }
+          ]
+        },
+        {
+          "kind": "call",
+          "tool": "search_materials",
+          "tool_call_id": "call_15905042341867313824",
+          "args": {
+            "query": "長期メモリ 日々のメモ すべて"
+          }
+        },
+        {
+          "kind": "return",
+          "tool": "search_materials",
+          "tool_call_id": "call_15905042341867313824",
+          "error": null,
+          "pages": [
+            {
+              "page_id": "lec03-main-p040",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "実装例：OpenClaw",
+              "page": 40,
+              "distance": 0.25566592812538147,
+              "content_characters": 383,
+              "content_sha256": "0a184c54800d421ab2242dcb4d28f72443aab83dd136a7904fd8737c7dd4afdd"
+            },
+            {
+              "page_id": "lec03-main-p038",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "メモリがないと、毎回ゼロからやり直しになる",
+              "page": 38,
+              "distance": 0.27285706996917725,
+              "content_characters": 467,
+              "content_sha256": "046b3869541bc4416ea419e94e392831d6504e7c438cafea78f3ac979b2ad982"
+            },
+            {
+              "page_id": "lec03-main-p041",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 6 メモリ",
+              "title": "Skill：繰り返す作業の手順をファイルに保存しておく",
+              "page": 41,
+              "distance": 0.28382331132888794,
+              "content_characters": 506,
+              "content_sha256": "945b3a79914ad1253eabc5b64c8e5a6f6a031239ce535b6085271e7808e4d7ef"
+            },
+            {
+              "page_id": "lec03-main-p013",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 2 エージェントを組み立てる",
+              "title": "メモリ",
+              "page": 13,
+              "distance": 0.28501397371292114,
+              "content_characters": 361,
+              "content_sha256": "66d9911abc51a19bd1d2b878bd116281a41d0d7430b928704684b684b69969f8"
+            },
+            {
+              "page_id": "lec03-main-p065",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：メモリと Context Engineering の最新動向",
+              "page": 65,
+              "distance": 0.2921886742115021,
+              "content_characters": 633,
+              "content_sha256": "4e0b2c468c0ebbfc0ceb9ae5b0f5ae41b24b21ed052c509cdf02629884034522"
+            }
+          ]
+        }
+      ],
+      "input_tokens": 6548,
+      "output_tokens": 472,
+      "model_requests": 3,
+      "generation_cost_usd": "0.0031444",
+      "manual_review": {
+        "answer_correct": null,
+        "citations_supported": null,
+        "useful_added_pages": [],
+        "unnecessary_added_pages": [],
+        "notes": "未確認"
+      },
+      "elapsed_seconds": 3.998664,
+      "finished_at": "2026-11-21T03:24:56.438102+00:00"
+    },
+    {
+      "case_id": "unanswerable",
+      "mode": "baseline",
+      "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください。",
+      "started_at": "2026-11-21T03:24:56.439628+00:00",
+      "status": "completed",
+      "behavior_flags": [],
+      "answer": "ご提示いただいた第1〜3回の講義資料を確認しましたが、今回作成されたRAGの「実測平均応答時間」や「正答率」に関する具体的な数値の記載はありません。\n\n講義資料の中では、LLMやRAGを用いたシステムを評価する際の大切な考え方として、以下のように説明されています。\n\n* **同じ質問でも答えは毎回変わるため、1回試しただけでは評価にならない**（第2回・PDF p.13）\n* **同じ質問を複数回聞いて、その平均やばらつき（揺れ）を見る必要がある**（第2回・PDF p.13）\n\n作成されたRAGの具体的な性能を測るためには、ご自身で複数回テストを行い、その結果を集計して確認していただくことになります。どのように評価を行えばよいか、考え方で迷う点があればサポートいたしますので、お知らせください。",
+      "trace": [
+        {
+          "kind": "call",
+          "tool": "search_materials",
+          "tool_call_id": "call_8455954093196127457",
+          "args": {
+            "query": "RAG 実測 平均 応答時間 正答率"
+          }
+        },
+        {
+          "kind": "return",
+          "tool": "search_materials",
+          "tool_call_id": "call_8455954093196127457",
+          "error": null,
+          "pages": [
+            {
+              "page_id": "lec02-main-p013",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "LLM は、確率で次の言葉を選ぶ",
+              "title": "帰結①：同じ質問でも、答えは毎回変わる",
+              "page": 13,
+              "distance": 0.30041542649269104,
+              "content_characters": 445,
+              "content_sha256": "1441a0269dda1c35a7ca028492c55f3a259501dedede66812d56ada21156e436"
+            },
+            {
+              "page_id": "lec03-main-p064",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：長時間タスクの実行能力の最新動向",
+              "page": 64,
+              "distance": 0.3163267970085144,
+              "content_characters": 802,
+              "content_sha256": "1ebba9f4c32d52491e93103109f7c71b2e6884e298a3226032960d2307f62400"
+            },
+            {
+              "page_id": "lec03-main-p019",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 3 ループ",
+              "title": "誤差の累積",
+              "page": 19,
+              "distance": 0.33146271109580994,
+              "content_characters": 493,
+              "content_sha256": "547761f0b9c88287ab2d1eea1fc7d24a555edeee0c1480c31dd521639ef97d9d"
+            },
+            {
+              "page_id": "lec02-main-p024",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "渡す・選ぶ／直す／考えさせる",
+              "title": "事後学習の前と後：同じ質問でも、ふるまいが変わる",
+              "page": 24,
+              "distance": 0.3408275842666626,
+              "content_characters": 809,
+              "content_sha256": "d97121b445c75eca361ed5882fe08baa530df320562c4ba84b2349dc589bf2b1"
+            },
+            {
+              "page_id": "lec01-main-p019",
+              "document_id": "lec01-main",
+              "lecture": 1,
+              "document_title": "AIエンジニアリング概論とAIコーディング",
+              "section": "なぜ今 AIエンジニアリングなのか",
+              "title": "研究室の実例：大規模講義の質問に答えるチャットボット",
+              "page": 19,
+              "distance": 0.34236428141593933,
+              "content_characters": 1087,
+              "content_sha256": "113178e150ef89e95c332677d30bb2b5d484190e7ab942ef0a3782ac826a6f04"
+            }
+          ]
+        }
+      ],
+      "input_tokens": 3207,
+      "output_tokens": 216,
+      "model_requests": 2,
+      "generation_cost_usd": "0.0015021",
+      "manual_review": {
+        "answer_correct": null,
+        "citations_supported": null,
+        "useful_added_pages": [],
+        "unnecessary_added_pages": [],
+        "notes": "未確認"
+      },
+      "elapsed_seconds": 2.433082,
+      "finished_at": "2026-11-21T03:24:58.872714+00:00"
+    },
+    {
+      "case_id": "unanswerable",
+      "mode": "neighbors",
+      "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください。",
+      "started_at": "2026-11-21T03:24:58.874679+00:00",
+      "status": "completed",
+      "behavior_flags": [],
+      "answer": "第1〜3回の講義資料を確認しましたが、受講生の皆様が個別に作成されたRAGアプリケーションの実測平均応答時間や正答率についての記載はありません。\n\nご自身のRAGシステムの性能を評価する際は、以下の点を確認してみましょう。\n\n- **評価セットの活用**: 公開ベンチマークではなく、ご自身の用途に合わせた独自の質問セット（答えられない質問も含める）を用いてテストします（第2回・PDF p.39）。\n- **複数回の測定**: LLMは確率で次の言葉を選ぶため、1回のテストだけでは正確な値がわかりません。同じ質問を複数回（例: 各5回）聞き直し、平均やばらつき（揺れ）を確認することが重要です（第2回・PDF p.13, p.17, p.18）。",
+      "trace": [
+        {
+          "kind": "call",
+          "tool": "search_materials",
+          "tool_call_id": "call_278677441756798893",
+          "args": {
+            "query": "実測平均応答時間 正答率"
+          }
+        },
+        {
+          "kind": "return",
+          "tool": "search_materials",
+          "tool_call_id": "call_278677441756798893",
+          "error": null,
+          "pages": [
+            {
+              "page_id": "lec03-main-p064",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：長時間タスクの実行能力の最新動向",
+              "page": 64,
+              "distance": 0.30251652002334595,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 802,
+              "content_sha256": "1ebba9f4c32d52491e93103109f7c71b2e6884e298a3226032960d2307f62400"
+            },
+            {
+              "page_id": "lec03-main-p019",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 3 ループ",
+              "title": "誤差の累積",
+              "page": 19,
+              "distance": 0.32312485575675964,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 493,
+              "content_sha256": "547761f0b9c88287ab2d1eea1fc7d24a555edeee0c1480c31dd521639ef97d9d"
+            },
+            {
+              "page_id": "lec02-main-p039",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "基盤モデルの地図と選び方",
+              "title": "ベンチマークの順位ではなく、自分の評価セットで選ぶ",
+              "page": 39,
+              "distance": 0.3285849988460541,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 356,
+              "content_sha256": "65ad7be8f9f9cfafe32f3f45d46cf7e962c7fcd8bad9af71ac3455d251537d03"
+            },
+            {
+              "page_id": "lec02-main-p013",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "LLM は、確率で次の言葉を選ぶ",
+              "title": "帰結①：同じ質問でも、答えは毎回変わる",
+              "page": 13,
+              "distance": 0.33495625853538513,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 445,
+              "content_sha256": "1441a0269dda1c35a7ca028492c55f3a259501dedede66812d56ada21156e436"
+            },
+            {
+              "page_id": "lec02-main-p017",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "LLM は、確率で次の言葉を選ぶ",
+              "title": "クイズ 1 ：公開してよい？（答え）",
+              "page": 17,
+              "distance": 0.3375172019004822,
+              "retrieval_role": "seed",
+              "seed_page_ids": [],
+              "content_characters": 349,
+              "content_sha256": "690236ad7b20265abe799ff2fcc501e2d9c762c42c4dc82e621e7f444490931b"
+            },
+            {
+              "page_id": "lec03-main-p063",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：ツール呼び出しの最新動向",
+              "page": 63,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p064"
+              ],
+              "content_characters": 732,
+              "content_sha256": "a436abceaced3577fc7da2dd1051fa7c8d23efa8aa1fbe96e202d4dccf21db1a"
+            },
+            {
+              "page_id": "lec03-main-p065",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Appendix",
+              "title": "補足：メモリと Context Engineering の最新動向",
+              "page": 65,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p064"
+              ],
+              "content_characters": 633,
+              "content_sha256": "4e0b2c468c0ebbfc0ceb9ae5b0f5ae41b24b21ed052c509cdf02629884034522"
+            },
+            {
+              "page_id": "lec03-main-p018",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 3 ループ",
+              "title": "Part 3 ループ",
+              "page": 18,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p019"
+              ],
+              "content_characters": 61,
+              "content_sha256": "5d0dab056d007a04cab81367905c6f8a0f4ce4df769939a6c098f8b4ad87e9ee"
+            },
+            {
+              "page_id": "lec03-main-p020",
+              "document_id": "lec03-main",
+              "lecture": 3,
+              "document_title": "AIエージェント",
+              "section": "Part 3 ループ",
+              "title": "定量的な目標設定の重要性",
+              "page": 20,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec03-main-p019"
+              ],
+              "content_characters": 544,
+              "content_sha256": "9ea0e7005d0ae6c246e3470df3a9736d7c32f46b47e524503327634deb5c5b42"
+            },
+            {
+              "page_id": "lec02-main-p038",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "基盤モデルの地図と選び方",
+              "title": "モデルの入手先と使い方： 3 つの選択肢",
+              "page": 38,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p039"
+              ],
+              "content_characters": 507,
+              "content_sha256": "ef2fa3c2fea0cf751aeca92d33bc59df5017b83b58338eb0dc80b01e29b460b4"
+            },
+            {
+              "page_id": "lec02-main-p040",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "基盤モデルの地図と選び方",
+              "title": "決め手は「コスト＜効果」。安くなると使い道が広がる",
+              "page": 40,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p039"
+              ],
+              "content_characters": 562,
+              "content_sha256": "23838508f2ab3869d10f5231f9526cef890dec7c484963daed8e9b45e93d5874"
+            },
+            {
+              "page_id": "lec02-main-p012",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "LLM は、確率で次の言葉を選ぶ",
+              "title": "サンプリング：確率からどう選ぶかで、答えの性格が変わる",
+              "page": 12,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p013"
+              ],
+              "content_characters": 341,
+              "content_sha256": "3a2af3f1421c5240847547ea1cbeefdf6cea9cc6bae74cd39e5a177e165330ca"
+            },
+            {
+              "page_id": "lec02-main-p014",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "LLM は、確率で次の言葉を選ぶ",
+              "title": "帰結②：知らないことも、それらしく答えてしまう",
+              "page": 14,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p013"
+              ],
+              "content_characters": 421,
+              "content_sha256": "633813243cfe578ce1409bb124ddc7755c605fed7f28c06e675d9cb56f23d2a5"
+            },
+            {
+              "page_id": "lec02-main-p016",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "LLM は、確率で次の言葉を選ぶ",
+              "title": "クイズ 1 ：公開してよい？",
+              "page": 16,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p017"
+              ],
+              "content_characters": 319,
+              "content_sha256": "94609b955ac9ecebf76171c68bea88afc2a226249d1054cda3e7b6cfb89686e7"
+            },
+            {
+              "page_id": "lec02-main-p018",
+              "document_id": "lec02-main",
+              "lecture": 2,
+              "document_title": "基盤モデルの仕組み",
+              "section": "LLM は、確率で次の言葉を選ぶ",
+              "title": "揺れと誤りに、こう付き合う",
+              "page": 18,
+              "retrieval_role": "neighbor",
+              "seed_page_ids": [
+                "lec02-main-p017"
+              ],
+              "content_characters": 582,
+              "content_sha256": "8643317176ccfd3555745b95e8dfa8f8218e2a0c9d4b872704952ff7c20b5682"
+            }
+          ]
+        }
+      ],
+      "input_tokens": 6885,
+      "output_tokens": 199,
+      "model_requests": 2,
+      "generation_cost_usd": "0.0025630",
+      "manual_review": {
+        "answer_correct": null,
+        "citations_supported": null,
+        "useful_added_pages": [],
+        "unnecessary_added_pages": [],
+        "notes": "未確認"
+      },
+      "elapsed_seconds": 2.572649,
+      "finished_at": "2026-11-21T03:25:01.447333+00:00"
+    }
+  ]
+}

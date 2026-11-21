@@ -1,79 +1,42 @@
-# 第5回 実装課題の実行・提出手順
+# 第5回 提出案内
 
 公開リポジトリ：<https://github.com/masahikoyr/lecture-ai-engineering-2026>
 
-**実装と自動テストは完了。提出を仕上げるには、Codespacesで実API比較を実行し、回答と引用根拠を確認する。現時点では比較完了とは申告しない。**
+**実装・自動テスト37件・Codespacesでの実API比較6件と、その結果の整理を完了。**
 
-## 1. Codespacesでlec05を開く
+## 提出内容
 
-まず未コミットの変更を確認する。
+- [answer.md](answer.md)：実装、比較条件、回答・引用・時間・トークン・費用、効果と限界。
+- [live_result.json](live_result.json)：利用者から受領した実測ファイル。内容を変更せず保存。
+- [live_review.json](live_review.json)：元ファイルとは分けたAI支援による本文照合と判定。独立した人手評価ではない。
+- [offline_result.json](offline_result.json)：APIを使わない固定ヒットの取得処理検証。実API比較とは別の証拠。
+
+元の`live_result.json`内の`manual_review`は未記入のまま保持し、照合結果は`live_review.json`とレポートで示す。今回の6件の回答が期待を満たしたことを、一般的な正答率と混同しない。
+
+## Quri入力用
+
+### Q1
+
+実装｜Implementation
+
+### Q2
+
+https://github.com/masahikoyr/lecture-ai-engineering-2026
+
+### Q3（300文字以内）
+
+検索したページの前後1ページを、同じ資料内で重複なく取得するよう改良しました。工夫した点は、通常版とツール名・説明・指示文をそろえ、取得処理の違いを比較しやすくしたことです。3問×2方式を実APIで比較し、自動テスト37件も確認しました。メモリの質問では検索が2回から1回となり、入力トークン数が約27.5％減りました。一方、LoRAや答えのない質問では入力と費用が増えました。必要な根拠は通常版にも含まれていたため、追加ページの効果を断定せず、回答・引用根拠・負担を分けて考察した点を評価いただきたいです。
+
+## 再現する場合
+
+提出用の比較は完了しているため、再実行は不要。追試する場合は、既存の実測ファイルを保ったまま別の出力先を指定する。
 
 ```bash
-git status --short
-```
-
-変更が表示された場合は、そのブランチで保存・commitしてから切り替える。変更を捨てる必要はない。
-
-```bash
-git fetch origin
-git switch lec05
 uv sync --frozen
 uv run pytest -q
+uv run python -m scripts.compare_lec05 --output lectures/05/live_result_recheck.json
 ```
 
-第5回の配布コードと検索DBは取り込み済み。`main`の更新や索引の再作成は不要。
+第5回の配布コードと検索DBは`lec05`に取り込み済み。APIキーは従来のCodespaces secretを使用する。モデルを切り替えた結果を元の条件のペアと混ぜない。
 
-## 2. 実APIで3問×2方式を比較する
-
-以前登録したCodespaces secret `GEMINI_API_KEY`をそのまま使う。キーをチャットやコードへ貼る必要はない。
-
-```bash
-uv run python -m scripts.compare_lec05
-```
-
-6組の回答、取得ページ、時間、入出力トークン、応答回数、生成API推定費用を`lectures/05/live_result.json`へ保存する。回答の正しさは自動採点しない。
-
-429/503などで止まったらAPIの案内に従って待ち、次で再開する。成功済みの組は繰り返さず、失敗した試行も残す。
-
-```bash
-uv run python -m scripts.compare_lec05 --resume
-```
-
-既存ファイルへの新規実行は上書きせず停止する。同じ条件なら`--resume`を使う。モデルを変える場合は別ファイルへ新規実行する。
-
-```bash
-AIE_MODEL=gemini-3.1-flash-lite uv run python -m scripts.compare_lec05 --output lectures/05/live_result_flash31.json
-```
-
-元の結果と別モデルの結果を一つのペアに混ぜない。再開時も同じモデル指定を付ける。
-
-## 3. 結果を確認してレポートを仕上げる
-
-結果JSONの回答を読み、[comparison_cases.json](comparison_cases.json)の期待するふるまいと資料本文を照合する。
-
-- LoRA：重みの固定、A・Bの学習、QLoRAの4bit化を説明したか。
-- メモリ：同一セッションの要約と外部保存を区別し、日々のメモが全部長期メモリになると誤解していないか。
-- 実測ログのない質問：時間や正答率を作らず、確認できないと答えたか。
-- 前後追加：役立った根拠と不要な情報、入力の負担はどう変わったか。
-
-`manual_review`と[answer.md](answer.md)の実API比較表・考察に確認結果を追記する。JSONをこのチャットに添付すれば、結果の整理とレポートへの反映を続けられる。
-
-Codespaces側で保存する場合は、対象ファイルだけをcommitする。
-
-```bash
-git add lectures/05/live_result.json lectures/05/answer.md
-git commit -m "第5回 実API比較の結果を記録"
-git push origin lec05
-```
-
-別モデルの結果を使った場合はファイル名を置き換える。
-
-## 4. 提出
-
-比較とレポートが完成したら、自分のfork内の`lec05`→`main`のPRを使用する。
-
-- Q1：実装｜Implementation（実測と確認を終えた後）
-- Q2：<https://github.com/masahikoyr/lecture-ai-engineering-2026>
-- Q3：実際に観察した改善・失敗・負担を記載する。文字数はQuriの表示に従う。
-
-作業終了後はCodespacesを停止する。
+自分のfork内の`lec05`→`main`のPRを確認し、Quriに上記を入力する。Quriへの送信とPRのマージはまだ行っていない。作業終了後はCodespacesを停止する。
