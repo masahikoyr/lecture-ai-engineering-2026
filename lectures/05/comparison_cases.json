@@ -1,0 +1,20 @@
+[
+  {
+    "id": "lora",
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？ QLoRAは何を加えますか？",
+    "reference_pages": ["lec02-main-p052"],
+    "expected_behavior": "元の重みWを固定し、低ランク行列A・Bを学習する。QLoRAは元の重みの4bit量子化を加える。根拠を示す。"
+  },
+  {
+    "id": "memory",
+    "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか？",
+    "reference_pages": ["lec03-main-p013", "lec03-main-p039", "lec03-main-p040"],
+    "expected_behavior": "同一セッション内の履歴要約と外部保存・読み戻しを区別する。OpenClawの例では日々のメモを見直し、基準を超えたものだけ残す。すべて長期メモリになると断定しない。"
+  },
+  {
+    "id": "unanswerable",
+    "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください。",
+    "reference_pages": [],
+    "expected_behavior": "講義資料には今回のシステムの実測ログがないと伝え、時間や正答率を創作しない。"
+  }
+]

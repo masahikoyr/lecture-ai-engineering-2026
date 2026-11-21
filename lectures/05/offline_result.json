@@ -1,0 +1,124 @@
+{
+  "evidence_type": "controlled_retrieval_test_no_api",
+  "limitations": "Fixed one-page seeds, not natural-language vector search or model answers. Distance 0.0 is a fixture. Coverage is page retrieval only, not answer accuracy. Timing excludes embedding and generation. Null tokens/cost are unmeasured, not zero.",
+  "cases_sha256": "7b09199fe9e6fbef68e00ef683ebe9eeff21b18f8222d8b4194a7ec431ae0d2b",
+  "runs": [
+    {
+      "case_id": "lora",
+      "mode": "baseline",
+      "fixed_seed": "lec02-main-p052",
+      "page_ids": [
+        "lec02-main-p052"
+      ],
+      "page_count": 1,
+      "content_characters": 717,
+      "reference_pages_found": [
+        "lec02-main-p052"
+      ],
+      "reference_page_coverage": 1.0,
+      "local_expansion_seconds": 0.0,
+      "answer": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "generation_cost_usd": null
+    },
+    {
+      "case_id": "lora",
+      "mode": "neighbors",
+      "fixed_seed": "lec02-main-p052",
+      "page_ids": [
+        "lec02-main-p052",
+        "lec02-main-p051",
+        "lec02-main-p053"
+      ],
+      "page_count": 3,
+      "content_characters": 1956,
+      "reference_pages_found": [
+        "lec02-main-p052"
+      ],
+      "reference_page_coverage": 1.0,
+      "local_expansion_seconds": 4.3e-05,
+      "answer": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "generation_cost_usd": null
+    },
+    {
+      "case_id": "memory",
+      "mode": "baseline",
+      "fixed_seed": "lec03-main-p039",
+      "page_ids": [
+        "lec03-main-p039"
+      ],
+      "page_count": 1,
+      "content_characters": 538,
+      "reference_pages_found": [
+        "lec03-main-p039"
+      ],
+      "reference_page_coverage": 0.3333333333333333,
+      "local_expansion_seconds": 1e-06,
+      "answer": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "generation_cost_usd": null
+    },
+    {
+      "case_id": "memory",
+      "mode": "neighbors",
+      "fixed_seed": "lec03-main-p039",
+      "page_ids": [
+        "lec03-main-p039",
+        "lec03-main-p038",
+        "lec03-main-p040"
+      ],
+      "page_count": 3,
+      "content_characters": 1388,
+      "reference_pages_found": [
+        "lec03-main-p039",
+        "lec03-main-p040"
+      ],
+      "reference_page_coverage": 0.6666666666666666,
+      "local_expansion_seconds": 3.2e-05,
+      "answer": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "generation_cost_usd": null
+    },
+    {
+      "case_id": "unanswerable",
+      "mode": "baseline",
+      "fixed_seed": "lec03-main-p013",
+      "page_ids": [
+        "lec03-main-p013"
+      ],
+      "page_count": 1,
+      "content_characters": 361,
+      "reference_pages_found": [],
+      "reference_page_coverage": null,
+      "local_expansion_seconds": 0.0,
+      "answer": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "generation_cost_usd": null
+    },
+    {
+      "case_id": "unanswerable",
+      "mode": "neighbors",
+      "fixed_seed": "lec03-main-p013",
+      "page_ids": [
+        "lec03-main-p013",
+        "lec03-main-p012",
+        "lec03-main-p014"
+      ],
+      "page_count": 3,
+      "content_characters": 843,
+      "reference_pages_found": [],
+      "reference_page_coverage": null,
+      "local_expansion_seconds": 2.7e-05,
+      "answer": null,
+      "input_tokens": null,
+      "output_tokens": null,
+      "generation_cost_usd": null
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "reviewer": "ChatGPT/Codex (AI-assisted comparison against supplied course material; not an independent human annotation)",
+  "reviewed_on": "2026-11-21",
+  "raw_result": "live_result.json",
+  "raw_result_sha256": "7e8d0ac38c7d01a837b318767b24d6f95e1eb330448a7b00327226406d23d64d",
+  "raw_file_preserved": true,
+  "source_of_user_test_result": "User-provided Codespaces terminal output: 37 passed in 14.64s",
+  "method": "Check original conditions/code/source hashes, every returned page content hash and length, cited page retrieval, and expected behavior. No Gemini calls or result rewriting.",
+  "verified_returned_page_occurrences": 57,
+  "limitations": [
+    "Three questions, one run per mode; not a general accuracy estimate.",
+    "LoRA and unanswerable retrieval queries differ between modes.",
+    "Memory reference pages 13/39/40 were already in both initial seed sets; causality of reduced search count is unproven.",
+    "Original manual_review fields remain unfilled; this review is separate and AI-assisted."
+  ],
+  "runs": [
+    {
+      "case_id": "lora",
+      "mode": "baseline",
+      "expected_behavior_met": true,
+      "citations_supported_in_course_material": true,
+      "cited_page_ids": [
+        "lec02-main-p051",
+        "lec02-main-p052"
+      ],
+      "all_cited_pages_retrieved": true,
+      "search_calls": 1,
+      "added_page_ids": [],
+      "added_pages_cited": [],
+      "notes": "Weights W fixed, A/B learned, QLoRA adds 4-bit compression; references 51/52 support these statements."
+    },
+    {
+      "case_id": "lora",
+      "mode": "neighbors",
+      "expected_behavior_met": true,
+      "citations_supported_in_course_material": true,
+      "cited_page_ids": [
+        "lec02-main-p051",
+        "lec02-main-p052"
+      ],
+      "all_cited_pages_retrieved": true,
+      "search_calls": 1,
+      "added_page_ids": [
+        "lec02-main-p053",
+        "lec02-main-p050",
+        "lec02-main-p059",
+        "lec02-main-p062",
+        "lec02-main-p046",
+        "lec02-main-p048"
+      ],
+      "added_pages_cited": [],
+      "notes": "Same expected answer and citations as baseline. Six added pages were not cited; no demonstrated correctness improvement."
+    },
+    {
+      "case_id": "memory",
+      "mode": "neighbors",
+      "expected_behavior_met": true,
+      "citations_supported_in_course_material": true,
+      "cited_page_ids": [
+        "lec03-main-p013",
+        "lec03-main-p038",
+        "lec03-main-p039",
+        "lec03-main-p040",
+        "lec03-main-p065"
+      ],
+      "all_cited_pages_retrieved": true,
+      "search_calls": 1,
+      "added_page_ids": [
+        "lec03-main-p064",
+        "lec03-main-p066",
+        "lec03-main-p037",
+        "lec03-main-p012",
+        "lec03-main-p014",
+        "lec03-main-p041"
+      ],
+      "added_pages_cited": [],
+      "notes": "Meets the same expected behavior with one search call. All cited pages were initial seeds; no added page is cited. Fewer calls/tokens observed but causal improvement is unproven."
+    },
+    {
+      "case_id": "memory",
+      "mode": "baseline",
+      "expected_behavior_met": true,
+      "citations_supported_in_course_material": true,
+      "cited_page_ids": [
+        "lec03-main-p013",
+        "lec03-main-p038",
+        "lec03-main-p039",
+        "lec03-main-p040",
+        "lec03-main-p065"
+      ],
+      "all_cited_pages_retrieved": true,
+      "search_calls": 2,
+      "added_page_ids": [],
+      "added_pages_cited": [],
+      "notes": "Separates compaction and cross-session memory; says only selected daily notes enter long-term memory. Two search calls. Initial seeds already include 13/39/40."
+    },
+    {
+      "case_id": "unanswerable",
+      "mode": "baseline",
+      "expected_behavior_met": true,
+      "citations_supported_in_course_material": true,
+      "cited_page_ids": [
+        "lec02-main-p013"
+      ],
+      "all_cited_pages_retrieved": true,
+      "search_calls": 1,
+      "added_page_ids": [],
+      "added_pages_cited": [],
+      "notes": "Declines to invent performance numbers; gives repeated-measurement guidance supported by lecture 2 p.13."
+    },
+    {
+      "case_id": "unanswerable",
+      "mode": "neighbors",
+      "expected_behavior_met": true,
+      "citations_supported_in_course_material": true,
+      "cited_page_ids": [
+        "lec02-main-p013",
+        "lec02-main-p017",
+        "lec02-main-p018",
+        "lec02-main-p039"
+      ],
+      "all_cited_pages_retrieved": true,
+      "search_calls": 1,
+      "added_page_ids": [
+        "lec03-main-p063",
+        "lec03-main-p065",
+        "lec03-main-p018",
+        "lec03-main-p020",
+        "lec02-main-p038",
+        "lec02-main-p040",
+        "lec02-main-p012",
+        "lec02-main-p014",
+        "lec02-main-p016",
+        "lec02-main-p018"
+      ],
+      "added_pages_cited": [
+        "lec02-main-p018"
+      ],
+      "notes": "Declines to invent performance numbers. General evaluation advice is supported by 2/39 and 2/13,17,18; newly added 2/18 supports the five-repeat example but does not answer the unavailable measurement question."
+    }
+  ]
+}
